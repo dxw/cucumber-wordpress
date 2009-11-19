@@ -27,7 +27,7 @@ Run cucumber:
 
 == Patches
  
-* Send me a pull request via GitHub or an email at tom@thedextrousweb.com.
+* Send me a pull request via GitHub or via email.
 
 == Author
 
