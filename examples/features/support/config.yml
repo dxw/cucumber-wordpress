@@ -1,0 +1,9 @@
+--- 
+WEBHOST: localhost
+DB_NAME: wordpress_test
+DB_USER: root
+DB_PASSWORD:
+DB_HOST: localhost
+DB_CHARSET: utf8
+DB_COLLATE:
+TABLE_PREFIX: wp_
