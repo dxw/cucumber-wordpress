@@ -1,16 +1,16 @@
+require 'singleton'
 require 'mysql'
-#Mysql::Result.send(:include, Enumerable)
-
-# RSpec
-require 'spec/expectations'
-require 'spec/mocks'
-require 'spec/mocks/example_methods'
-
-#require 'test/unit/assertions'
-#World(Test::Unit::Assertions)
 
 class WordPress
-  def self.configure(data)
+  include Singleton
+
+  def self.method_missing(method, *args)
+    self.instance.send(method, *args)
+  end
+
+  attr_accessor :passwords, :mysql, :original_contents
+
+  def configure(data)
     $WEBHOST = data['WEBHOST'].to_s
     $DB_NAME = data['DB_NAME'].to_s
     $DB_USER = data['DB_USER'].to_s
@@ -21,20 +21,20 @@ class WordPress
     $TABLE_PREFIX = data['TABLE_PREFIX'].to_s
   end
 
-  def self.create_db
+  def create_db
     mysql = Mysql::new($DB_HOST, $DB_USER, $DB_PASSWORD)
     mysql.query("create database if not exists #{$DB_NAME} character set = #{$DB_CHARSET}#{$DB_COLLATE.present? ? " collate = #{$DB_COLLATE}" : ''}")
-    $mysql = Mysql::new($DB_HOST, $DB_USER, $DB_PASSWORD, $DB_NAME)
+    @mysql = Mysql::new($DB_HOST, $DB_USER, $DB_PASSWORD, $DB_NAME)
   end
 
-  def self.drop_db
-    $mysql.query("drop database if exists #{$DB_NAME}")
+  def drop_db
+    @mysql.query("drop database if exists #{$DB_NAME}")
   end
 
-  def self.write_config
+  def write_config
     # Copy production DB elsewhere
-    @@has_config = File.exist? 'wp-config.php'
-    FileUtils.cp 'wp-config.php', '.wp-config.php' if @@has_config
+    @has_config = File.exist? 'wp-config.php'
+    FileUtils.cp 'wp-config.php', '.wp-config.php' if @has_config
 
     # Write our own
     open('wp-config.php','w+') do |f|
@@ -58,22 +58,22 @@ HERE
     end
   end
 
-  def self.reset_config
+  def reset_config
     FileUtils.rm 'wp-config.php'
-    FileUtils.mv '.wp-config.php', 'wp-config.php' if @@has_config
+    FileUtils.mv '.wp-config.php', 'wp-config.php' if @has_config
   end
 
-  def self.reset_db
-    $original_contents.nil? ? nil : $original_contents.each_pair do |table,contents|
-      $mysql.query("delete from #{$TABLE_PREFIX}#{table}")
+  def reset_db
+    @original_contents.nil? ? nil : @original_contents.each_pair do |table,contents|
+      @mysql.query("delete from #{$TABLE_PREFIX}#{table}")
       contents.each do |row|
         values = row.map{|v|"#{v.nil? ? 'null' : "'"+Mysql.escape_string(v)+"'"}"}.join(', ')
-        $mysql.query("insert into #{$TABLE_PREFIX}#{table} values (#{values})")
+        @mysql.query("insert into #{$TABLE_PREFIX}#{table} values (#{values})")
       end
     end
   end
 
-  def self.path_to(page_name)
+  def path_to(page_name)
     partial = case page_name
     when /^homepage$/
       '/'
