@@ -1,0 +1,38 @@
+= cucumber-wordpress
+
+Environment setup and step definitions for testing WordPress with Cucumber.
+
+== Getting started
+
+Install the gem:
+  gem install cucumber-wordpress --source http://gemcutter.org
+
+Copy the examples/features/ directory into an existing WordPress installation:
+  cd wordpress-installation
+  cp /usr/lib/ruby/gems/1.8/gems/cucumber-wordpress-1.0/examples/features .
+
+Configure wp-config variables:
+  vim features/support/config.yml
+
+Run cucumber:
+  cucumber
+
+== Caveats
+
+* The WordPress installation you're testing must be being served over HTTP
+  somehow (see WEBHOST in config.yml). Eventually I want to be able to start a
+  Web server from within cucumber.
+* wp-config.php gets copied elsewhere and overwritten, so you can't be running
+  this in a production environment.
+
+== Patches
+ 
+* Send me a pull request via GitHub or an email at tom@thedextrousweb.com.
+
+== Author
+
+* Tom Adams <tom@thedextrousweb.com>
+
+== Copyright
+
+Copyright (c) 2009 The Dextrous Web. See LICENCE for details.
