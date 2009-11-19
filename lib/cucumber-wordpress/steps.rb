@@ -35,11 +35,11 @@ Given /^I am logged in as "([^\"]*)"$/ do |user|
   click_button('Log In')
 end
 
-Given /^plugin "([^\"]*)" is (enabled|disabled)$/ do |able|
+Given /^plugin "([^\"]*)" is (enabled|disabled)$/ do |plugin,able|
   Given 'I am logged in as "admin"'
   visit path_to 'admin dashboard'
   click_link('Plugins')
-  link = '//a[contains(@href,"consultationxml")]'
+  link = %Q&//a[contains(@href,"#{plugin}")]&
   if dom.xpath("#{link}/child::text()").any?{|t|t.to_s == 'Activate'}
     if able == 'enabled'
       click_link_within("#{link}/..",'Activate')
