@@ -9,7 +9,7 @@ Install the gem:
 
 Copy the examples/features/ directory into an existing WordPress installation:
   cd wordpress-installation
-  cp /usr/lib/ruby/gems/1.8/gems/cucumber-wordpress-1.0/examples/features .
+  cp -R /usr/lib/ruby/gems/1.8/gems/cucumber-wordpress-1.0/examples/features .
 
 Configure wp-config variables:
   vim features/support/config.yml
