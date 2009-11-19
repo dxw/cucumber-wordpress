@@ -35,4 +35,4 @@ Run cucumber:
 
 == Copyright
 
-Copyright (c) 2009 The Dextrous Web. See LICENCE for details.
+Copyright © 2009 The Dextrous Web. See LICENCE for details.
