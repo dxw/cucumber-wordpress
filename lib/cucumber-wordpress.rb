@@ -81,7 +81,7 @@ HERE
     when /^media library$/
       "/wp-admin/upload.php"
     else
-      raise "Can't find mapping from \"#{page_name}\" to a path.\n"
+      return nil
     end
     URI::join("http://#{@WEBHOST}/", partial)
   end
