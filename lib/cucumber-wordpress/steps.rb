@@ -49,11 +49,11 @@ Given /^plugin "([^\"]*)" is (enabled|disabled)$/ do |plugin,able|
   end
 end
 
-Then /^there should be (\d+) posts$/ do |count|
+Then /^there should be (\d+) posts?$/ do |count|
   WordPress.mysql.query("select count(*) from #{WordPress.TABLE_PREFIX}posts where ID != 1 and post_type = 'post'").fetch_row.first.to_i.should == count.to_i
 end
 
-Then /^there should be (\d+) categories$/ do |count|
+Then /^there should be (\d+) categories?$/ do |count|
   # Two initial categories, which we won't count: Uncategorized and Blogroll
   WordPress.mysql.query("select count(*) from #{WordPress.TABLE_PREFIX}terms where term_id > 2").fetch_row.first.to_i.should == count.to_i
 end
