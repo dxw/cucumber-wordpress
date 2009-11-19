@@ -78,8 +78,6 @@ HERE
       '/wp-login.php'
     when /^admin dashboard$/
       '/wp-admin/'
-    when /^upload new consultation$/
-      '/wp-admin/consultation-new.php'
     when /^media library$/
       "/wp-admin/upload.php"
     else

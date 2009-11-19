@@ -20,21 +20,13 @@ end
 
 require 'cucumber-wordpress'
 require 'cucumber-wordpress/steps'
-
-# Get the WordPress configuration for this site
 WordPress.configure(YAML::load(open(File.join(File.dirname(__FILE__),'config.yml'))))
-
-# Hide the original wp-config.php, and write our own
 WordPress.write_config
 WordPress.create_db
-
 at_exit do
-  # Replace the original wp-config.php (if it existed)
   WordPress.reset_config
   WordPress.drop_db
 end
-
-# Before every scenario, reset the DB to how it was when it was first installed
 Before do |scenario|
   WordPress.reset_db
 end
