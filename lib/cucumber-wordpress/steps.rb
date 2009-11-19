@@ -24,7 +24,7 @@ Given /^WordPress is installed$/ do
    terms
    usermeta
    users].each do |table|
-    WordPress.original_contents[table] = WordPress.mysql.query("select * from #{$TABLE_PREFIX}#{table}").map{|row|row}
+    WordPress.original_contents[table] = WordPress.mysql.query("select * from #{WordPress.TABLE_PREFIX}#{table}").map{|row|row}
    end
 end
 
@@ -50,22 +50,22 @@ Given /^plugin "([^\"]*)" is (enabled|disabled)$/ do |able|
 end
 
 Then /^there should be (\d+) posts$/ do |count|
-  WordPress.mysql.query("select count(*) from #{$TABLE_PREFIX}posts where ID != 1 and post_type = 'post'").fetch_row.first.to_i.should == count.to_i
+  WordPress.mysql.query("select count(*) from #{WordPress.TABLE_PREFIX}posts where ID != 1 and post_type = 'post'").fetch_row.first.to_i.should == count.to_i
 end
 
 Then /^there should be (\d+) categories$/ do |count|
   # Two initial categories, which we won't count: Uncategorized and Blogroll
-  WordPress.mysql.query("select count(*) from #{$TABLE_PREFIX}terms where term_id > 2").fetch_row.first.to_i.should == count.to_i
+  WordPress.mysql.query("select count(*) from #{WordPress.TABLE_PREFIX}terms where term_id > 2").fetch_row.first.to_i.should == count.to_i
 end
 
 Then /^there should be a category called "([^\"]*)"$/ do |category|
-  WordPress.mysql.query("select count(*) > 0 from #{$TABLE_PREFIX}terms where name = '#{Mysql.escape_string(category)}' or slug = '#{Mysql.escape_string(category)}'").fetch_row.first.to_i.should == 1
+  WordPress.mysql.query("select count(*) > 0 from #{WordPress.TABLE_PREFIX}terms where name = '#{Mysql.escape_string(category)}' or slug = '#{Mysql.escape_string(category)}'").fetch_row.first.to_i.should == 1
 end
 
 Then /^there should be a post called "([^\"]*)"$/ do |post|
-  WordPress.mysql.query("select count(*) > 0 from #{$TABLE_PREFIX}posts where post_title = '#{Mysql.escape_string(post)}' or post_name = '#{Mysql.escape_string(post)}'").fetch_row.first.to_i.should == 1
+  WordPress.mysql.query("select count(*) > 0 from #{WordPress.TABLE_PREFIX}posts where post_title = '#{Mysql.escape_string(post)}' or post_name = '#{Mysql.escape_string(post)}'").fetch_row.first.to_i.should == 1
 end
 
 Then /^there should be a post called "([^\"]*)" in the "([^\"]*)" category$/ do |post, category|
-  WordPress.mysql.query("select count(*) > 0 from #{$TABLE_PREFIX}terms join #{$TABLE_PREFIX}term_relationships join #{$TABLE_PREFIX}posts where (post_title = '#{Mysql.escape_string(post)}' or post_name = '#{Mysql.escape_string(post)}') and (name = '#{Mysql.escape_string(category)}' or slug = '#{Mysql.escape_string(category)}')").fetch_row.first.to_i.should == 1
+  WordPress.mysql.query("select count(*) > 0 from #{WordPress.TABLE_PREFIX}terms join #{WordPress.TABLE_PREFIX}term_relationships join #{WordPress.TABLE_PREFIX}posts where (post_title = '#{Mysql.escape_string(post)}' or post_name = '#{Mysql.escape_string(post)}') and (name = '#{Mysql.escape_string(category)}' or slug = '#{Mysql.escape_string(category)}')").fetch_row.first.to_i.should == 1
 end

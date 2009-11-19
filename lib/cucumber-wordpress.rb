@@ -1,5 +1,6 @@
 require 'singleton'
 require 'mysql'
+Mysql::Result.send(:include, Enumerable)
 
 class WordPress
   include Singleton
@@ -9,26 +10,27 @@ class WordPress
   end
 
   attr_accessor :passwords, :mysql, :original_contents
+  attr_accessor :WEBHOST, :DB_NAME, :DB_USER, :DB_PASSWORD, :DB_HOST, :DB_CHARSET, :DB_COLLATE, :TABLE_PREFIX
 
   def configure(data)
-    $WEBHOST = data['WEBHOST'].to_s
-    $DB_NAME = data['DB_NAME'].to_s
-    $DB_USER = data['DB_USER'].to_s
-    $DB_PASSWORD = data['DB_PASSWORD'].to_s
-    $DB_HOST = data['DB_HOST'].to_s
-    $DB_CHARSET = data['DB_CHARSET'].to_s
-    $DB_COLLATE = data['DB_COLLATE'].to_s
-    $TABLE_PREFIX = data['TABLE_PREFIX'].to_s
+    @WEBHOST = data['WEBHOST'].to_s
+    @DB_NAME = data['DB_NAME'].to_s
+    @DB_USER = data['DB_USER'].to_s
+    @DB_PASSWORD = data['DB_PASSWORD'].to_s
+    @DB_HOST = data['DB_HOST'].to_s
+    @DB_CHARSET = data['DB_CHARSET'].to_s
+    @DB_COLLATE = data['DB_COLLATE'].to_s
+    @TABLE_PREFIX = data['TABLE_PREFIX'].to_s
   end
 
   def create_db
-    mysql = Mysql::new($DB_HOST, $DB_USER, $DB_PASSWORD)
-    mysql.query("create database if not exists #{$DB_NAME} character set = #{$DB_CHARSET}#{$DB_COLLATE.present? ? " collate = #{$DB_COLLATE}" : ''}")
-    @mysql = Mysql::new($DB_HOST, $DB_USER, $DB_PASSWORD, $DB_NAME)
+    mysql = Mysql::new(@DB_HOST, @DB_USER, @DB_PASSWORD)
+    mysql.query("create database if not exists #{@DB_NAME} character set = #{@DB_CHARSET}#{@DB_COLLATE.present? ? " collate = #{@DB_COLLATE}" : ''}")
+    @mysql = Mysql::new(@DB_HOST, @DB_USER, @DB_PASSWORD, @DB_NAME)
   end
 
   def drop_db
-    @mysql.query("drop database if exists #{$DB_NAME}")
+    @mysql.query("drop database if exists #{@DB_NAME}")
   end
 
   def write_config
@@ -40,17 +42,17 @@ class WordPress
     open('wp-config.php','w+') do |f|
       f.write <<HERE
 <?php
-define('DB_NAME', '#{$DB_NAME}');
-define('DB_USER', '#{$DB_USER}');
-define('DB_PASSWORD', '#{$DB_PASSWORD}');
-define('DB_HOST', '#{$DB_HOST}');
-define('DB_CHARSET', '#{$DB_CHARSET}');
-define('DB_COLLATE', '#{$DB_COLLATE}');
+define('DB_NAME', '#{@DB_NAME}');
+define('DB_USER', '#{@DB_USER}');
+define('DB_PASSWORD', '#{@DB_PASSWORD}');
+define('DB_HOST', '#{@DB_HOST}');
+define('DB_CHARSET', '#{@DB_CHARSET}');
+define('DB_COLLATE', '#{@DB_COLLATE}');
 define('AUTH_KEY', 'put your unique phrase here');
 define('SECURE_AUTH_KEY', 'put your unique phrase here');
 define('LOGGED_IN_KEY', 'put your unique phrase here');
 define('NONCE_KEY', 'put your unique phrase here');
-$table_prefix  = '#{$TABLE_PREFIX}';
+$table_prefix  = '#{@TABLE_PREFIX}';
 define ('WPLANG', '');
 if ( !defined('ABSPATH') ) define('ABSPATH', dirname(__FILE__) . '/');
 require_once(ABSPATH . 'wp-settings.php');
@@ -65,10 +67,10 @@ HERE
 
   def reset_db
     @original_contents.nil? ? nil : @original_contents.each_pair do |table,contents|
-      @mysql.query("delete from #{$TABLE_PREFIX}#{table}")
+      @mysql.query("delete from #{@TABLE_PREFIX}#{table}")
       contents.each do |row|
         values = row.map{|v|"#{v.nil? ? 'null' : "'"+Mysql.escape_string(v)+"'"}"}.join(', ')
-        @mysql.query("insert into #{$TABLE_PREFIX}#{table} values (#{values})")
+        @mysql.query("insert into #{@TABLE_PREFIX}#{table} values (#{values})")
       end
     end
   end
@@ -88,6 +90,6 @@ HERE
     else
       raise "Can't find mapping from \"#{page_name}\" to a path.\n"
     end
-    URI::join("http://#{$WEBHOST}/", partial)
+    URI::join("http://#{@WEBHOST}/", partial)
   end
 end
