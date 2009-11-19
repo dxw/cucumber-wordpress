@@ -8,6 +8,8 @@ begin
     gem.homepage = "http://github.com/dxw/cucumber-wordpress"
     gem.authors = ["Tom Adams"]
     gem.add_dependency "cucumber"
+    gem.add_dependency "webrat"
+    gem.add_dependency "mysql"
   end
 rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
