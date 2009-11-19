@@ -24,9 +24,9 @@ class WordPress
   end
 
   def create_db
-    mysql = Mysql::new(@DB_HOST, @DB_USER, @DB_PASSWORD)
-    mysql.query("create database if not exists #{@DB_NAME} character set = #{@DB_CHARSET}#{@DB_COLLATE.present? ? " collate = #{@DB_COLLATE}" : ''}")
-    @mysql = Mysql::new(@DB_HOST, @DB_USER, @DB_PASSWORD, @DB_NAME)
+    @mysql = Mysql::new(@DB_HOST, @DB_USER, @DB_PASSWORD)
+    @mysql.query("create database if not exists #{@DB_NAME} character set = #{@DB_CHARSET}#{@DB_COLLATE.present? ? " collate = #{@DB_COLLATE}" : ''}")
+    @mysql.query("use #{@DB_NAME}")
   end
 
   def drop_db
