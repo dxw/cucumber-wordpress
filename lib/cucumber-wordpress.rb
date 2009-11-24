@@ -10,9 +10,10 @@ class WordPress
   end
 
   attr_accessor :passwords, :mysql, :original_contents
-  attr_accessor :WEBHOST, :DB_NAME, :DB_USER, :DB_PASSWORD, :DB_HOST, :DB_CHARSET, :DB_COLLATE, :TABLE_PREFIX
+  attr_accessor :ABSPATH, :WEBHOST, :DB_NAME, :DB_USER, :DB_PASSWORD, :DB_HOST, :DB_CHARSET, :DB_COLLATE, :TABLE_PREFIX
 
   def configure(data)
+    @ABSPATH = data['ABSPATH'].to_s
     @WEBHOST = data['WEBHOST'].to_s
     @DB_NAME = data['DB_NAME'].to_s
     @DB_USER = data['DB_USER'].to_s
@@ -35,11 +36,11 @@ class WordPress
 
   def write_config
     # Copy production DB elsewhere
-    @has_config = File.exist? 'wp-config.php'
-    FileUtils.cp 'wp-config.php', '.wp-config.php' if @has_config
+    @has_config = File.exist? File.join(@ABSPATH,'wp-config.php')
+    FileUtils.cp File.join(@ABSPATH,'wp-config.php'), File.join(@ABSPATH,'.wp-config.php') if @has_config
 
     # Write our own
-    open('wp-config.php','w+') do |f|
+    open(File.join(@ABSPATH,'wp-config.php'),'w+') do |f|
       f.write <<HERE
 <?php
 define('DB_NAME', '#{@DB_NAME}');
@@ -56,8 +57,8 @@ HERE
   end
 
   def reset_config
-    FileUtils.rm 'wp-config.php'
-    FileUtils.mv '.wp-config.php', 'wp-config.php' if @has_config
+    FileUtils.rm File.join(@ABSPATH,'wp-config.php')
+    FileUtils.mv File.join(@ABSPATH,'.wp-config.php'), File.join(@ABSPATH,'wp-config.php') if @has_config
   end
 
   def reset_db
