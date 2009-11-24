@@ -7,8 +7,8 @@ Given /^WordPress is installed$/ do
     click_button('Install WordPress')
     WordPress.passwords = {'admin' => response.body.match(%r[<td><code>(.+)</code><br />])[1]}
   end
-  visit path_to 'homepage'
-  response.body.should include "<title> #{title}</title>"
+  visit path_to 'login page'
+  response.body.should include "<title>#{title} &rsaquo; Log In</title>"
 
   # Take this so we can reset the DB before each scenario
   WordPress.original_contents = {}
