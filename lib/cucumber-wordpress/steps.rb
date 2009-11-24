@@ -8,9 +8,7 @@ Given /^WordPress is installed$/ do
     WordPress.passwords = {'admin' => response.body.match(%r[<td><code>(.+)</code><br />])[1]}
   end
   visit path_to 'homepage'
-  unless response.body.include? "<title> #{title}</title>"
-    raise Exception
-  end
+  response.body.should include "<title> #{title}</title>"
 
   # Take this so we can reset the DB before each scenario
   WordPress.original_contents = {}
