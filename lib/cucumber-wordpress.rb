@@ -9,10 +9,11 @@ class WordPress
     self.instance.send(method, *args)
   end
 
-  attr_accessor :passwords, :mysql, :original_contents
+  attr_accessor :config, :passwords, :mysql, :original_contents
   attr_accessor :ABSPATH, :WEBHOST, :DB_NAME, :DB_USER, :DB_PASSWORD, :DB_HOST, :DB_CHARSET, :DB_COLLATE, :TABLE_PREFIX
 
   def configure(data)
+    @config = data
     @ABSPATH = data['ABSPATH'].to_s
     @WEBHOST = data['WEBHOST'].to_s
     @DB_NAME = data['DB_NAME'].to_s
