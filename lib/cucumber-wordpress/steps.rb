@@ -65,5 +65,5 @@ Then /^there should be a post called "([^\"]*)"$/ do |post|
 end
 
 Then /^there should be a post called "([^\"]*)" in the "([^\"]*)" category$/ do |post, category|
-  WordPress.mysql.query("select count(*) > 0 from #{WordPress.TABLE_PREFIX}terms join #{WordPress.TABLE_PREFIX}term_relationships join #{WordPress.TABLE_PREFIX}posts where (post_title = '#{Mysql.escape_string(post)}' or post_name = '#{Mysql.escape_string(post)}') and (name = '#{Mysql.escape_string(category)}' or slug = '#{Mysql.escape_string(category)}')").fetch_row.first.to_i.should == 1
+  WordPress.mysql.query("select count(*) > 0 from #{WordPress.TABLE_PREFIX}terms join #{WordPress.TABLE_PREFIX}term_relationships join #{WordPress.TABLE_PREFIX}posts where term_id = term_taxonomy_id and ID = object_id and (post_title = '#{Mysql.escape_string(post)}' or post_name = '#{Mysql.escape_string(post)}') and (name = '#{Mysql.escape_string(category)}' or slug = '#{Mysql.escape_string(category)}')").fetch_row.first.to_i.should == 1
 end
