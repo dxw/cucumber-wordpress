@@ -3,7 +3,7 @@ Given /^WordPress is installed$/ do
   title = 'A Very Boring Test Title'
   if response.body.include? '<title>WordPress &rsaquo; Installation</title>'
     fill_in('Blog Title', :with => title)
-    fill_in('Your E-mail', :with => 'test@wordpress.org')
+    fill_in('Your E-mail', :with => 'test@example.org')
     click_button('Install WordPress')
     WordPress.passwords = {'admin' => response.body.match(%r[<td><code>(.+)</code><br />])[1]}
   end
