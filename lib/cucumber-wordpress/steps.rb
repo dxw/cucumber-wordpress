@@ -1,14 +1,14 @@
 Given /^WordPress is installed$/ do
   visit path_to 'homepage'
   title = 'A Very Boring Test Title'
-  if response.body.include? '<title>WordPress &rsaquo; Installation</title>'
+  if response.include? '<title>WordPress &rsaquo; Installation</title>'
     fill_in('Blog Title', :with => title)
     fill_in('Your E-mail', :with => 'test@example.org')
     click_button('Install WordPress')
-    WordPress.passwords = {'admin' => response.body.match(%r[<td><code>(.+)</code><br />])[1]}
+    WordPress.passwords = {'admin' => response.match(%r[<td><code>(.+)</code><br />])[1]}
   end
   visit path_to 'login page'
-  response.body.should include "<title>#{title} &rsaquo; Log In</title>"
+  response.should include "<title>#{title} &rsaquo; Log In</title>"
 
   # Take this so we can reset the DB before each scenario
   WordPress.original_contents = {}
