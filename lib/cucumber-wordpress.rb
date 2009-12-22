@@ -72,6 +72,10 @@ HERE
     end
   end
 
+  def php code
+    `php -r 'include "#{WordPress.ABSPATH}/wp-load.php"; #{code};' 2>/dev/null`
+  end
+
   def path_to(page_name)
     partial = case page_name
     when /^homepage$/
