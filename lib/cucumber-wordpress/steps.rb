@@ -33,6 +33,12 @@ Given /^I am logged in as "([^\"]*)"$/ do |user|
   click_button('Log In')
 end
 
+Given /^theme "([^\"]*)" is enabled$/ do |theme|
+  Given 'I am logged in as "admin"'
+  Given 'I am on manage themes'
+  click_link_within %Q&//a[contains(@title,"#{theme}")]/..&, 'Activate'
+end
+
 Given /^plugin "([^\"]*)" is (enabled|disabled)$/ do |plugin,able|
   Given 'I am logged in as "admin"'
   visit path_to 'admin dashboard'
