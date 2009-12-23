@@ -84,6 +84,10 @@ HERE
       '/wp-admin/post-new.php'
     when /^media library$/
       "/wp-admin/upload.php"
+    when /^manage themes$/
+      '/wp-admin/themes.php'
+    when /^new page$/
+      '/wp-admin/page-new.php'
     when /^post "(.+?)"$/
       id = WordPress.mysql.query(%Q'SELECT ID FROM #{WordPress.TABLE_PREFIX}posts WHERE post_title="#{$1}"').fetch_row.first.to_i
       WordPress.php("echo get_permalink(#{id})")
