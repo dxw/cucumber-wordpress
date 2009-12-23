@@ -9,7 +9,7 @@ class WordPress
     self.instance.send(method, *args)
   end
 
-  attr_accessor :config, :passwords, :mysql, :original_contents
+  attr_accessor :config, :passwords, :original_contents
   attr_accessor :ABSPATH, :WEBHOST, :DB_NAME, :DB_USER, :DB_PASSWORD, :DB_HOST, :DB_CHARSET, :DB_COLLATE, :TABLE_PREFIX
 
   def configure(data)
@@ -25,14 +25,18 @@ class WordPress
     @TABLE_PREFIX = data['TABLE_PREFIX'].to_s
   end
 
+  def mysql
+    @mysql ||= Mysql::new(@DB_HOST, @DB_USER, @DB_PASSWORD)
+    @mysql
+  end
+
   def create_db
-    @mysql = Mysql::new(@DB_HOST, @DB_USER, @DB_PASSWORD)
-    @mysql.query("create database if not exists #{@DB_NAME} character set = #{@DB_CHARSET}#{@DB_COLLATE.present? ? " collate = #{@DB_COLLATE}" : ''}")
-    @mysql.query("use #{@DB_NAME}")
+    mysql.query("create database if not exists #{@DB_NAME} character set = #{@DB_CHARSET}#{@DB_COLLATE.present? ? " collate = #{@DB_COLLATE}" : ''}")
+    mysql.query("use #{@DB_NAME}")
   end
 
   def drop_db
-    @mysql.query("drop database if exists #{@DB_NAME}")
+    mysql.query("drop database if exists #{@DB_NAME}")
   end
 
   def write_config
@@ -64,10 +68,10 @@ HERE
 
   def reset_db
     @original_contents.nil? ? nil : @original_contents.each_pair do |table,contents|
-      @mysql.query("delete from #{@TABLE_PREFIX}#{table}")
+      mysql.query("delete from #{@TABLE_PREFIX}#{table}")
       contents.each do |row|
         values = row.map{|v|"#{v.nil? ? 'null' : "'"+Mysql.escape_string(v)+"'"}"}.join(', ')
-        @mysql.query("insert into #{@TABLE_PREFIX}#{table} values (#{values})")
+        mysql.query("insert into #{@TABLE_PREFIX}#{table} values (#{values})")
       end
     end
   end
