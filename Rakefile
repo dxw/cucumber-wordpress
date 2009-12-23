@@ -1,7 +1,7 @@
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
-    gem.version = "1.0"
+    gem.version = "1.1"
     gem.name = "cucumber-wordpress"
     gem.summary = %Q{Environment setup and step definitions for testing WordPress with Cucumber}
     gem.email = "tom@thedextrousweb.com"
