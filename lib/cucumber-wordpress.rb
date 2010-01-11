@@ -48,6 +48,7 @@ class WordPress
     open(File.join(@ABSPATH,'wp-config.php'),'w+') do |f|
       f.write <<HERE
 <?php
+define('WP_DEBUG', true);
 define('DB_NAME', '#{@DB_NAME}');
 define('DB_USER', '#{@DB_USER}');
 define('DB_PASSWORD', '#{@DB_PASSWORD}');
