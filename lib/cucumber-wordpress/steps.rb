@@ -73,3 +73,8 @@ end
 Then /^there should be a post called "([^\"]*)" in the "([^\"]*)" category$/ do |post, category|
   WordPress.mysql.query("select count(*) > 0 from #{WordPress.TABLE_PREFIX}terms join #{WordPress.TABLE_PREFIX}term_relationships join #{WordPress.TABLE_PREFIX}posts where term_id = term_taxonomy_id and ID = object_id and (post_title = '#{Mysql.escape_string(post)}' or post_name = '#{Mysql.escape_string(post)}') and (name = '#{Mysql.escape_string(category)}' or slug = '#{Mysql.escape_string(category)}')").fetch_row.first.to_i.should == 1
 end
+
+Given /^option "([^\"]*)" is set to "(.*)"$/ do |option, value|
+  WordPress.mysql.query(%Q'DELETE FROM #{WordPress.TABLE_PREFIX}options WHERE option_name="#{Mysql.escape_string option}"')
+  WordPress.mysql.query(%Q'INSERT INTO #{WordPress.TABLE_PREFIX}options SET option_name="#{Mysql.escape_string option}", option_value="#{Mysql.escape_string value}"')
+end
