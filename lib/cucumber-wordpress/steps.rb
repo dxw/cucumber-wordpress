@@ -12,17 +12,8 @@ Given /^WordPress is installed$/ do
 
   # Take this so we can reset the DB before each scenario
   WordPress.original_contents = {}
-  %w[comments
-   links
-   options
-   postmeta
-   posts
-   term_relationships
-   term_taxonomy
-   terms
-   usermeta
-   users].each do |table|
-    WordPress.original_contents[table] = WordPress.mysql.query("select * from #{WordPress.TABLE_PREFIX}#{table}").map{|row|row}
+   WordPress.tables.each do |table|
+     WordPress.original_contents[table] = WordPress.mysql.query("select * from #{table}").map{|row|row}
    end
 end
 

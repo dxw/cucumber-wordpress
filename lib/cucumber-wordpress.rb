@@ -9,7 +9,7 @@ class WordPress
     self.instance.send(method, *args)
   end
 
-  attr_accessor :config, :passwords, :original_contents
+  attr_accessor :config, :passwords, :original_contents, :tables
   attr_accessor :ABSPATH, :WEBHOST, :DB_NAME, :DB_USER, :DB_PASSWORD, :DB_HOST, :DB_CHARSET, :DB_COLLATE, :TABLE_PREFIX
 
   def configure(data)
@@ -23,6 +23,16 @@ class WordPress
     @DB_CHARSET = data['DB_CHARSET'].to_s
     @DB_COLLATE = data['DB_COLLATE'].to_s
     @TABLE_PREFIX = data['TABLE_PREFIX'].to_s
+    @tables = %w[comments
+                 links
+                 options
+                 postmeta
+                 posts
+                 term_relationships
+                 term_taxonomy
+                 terms
+                 usermeta
+                 users].map{|t|@TABLE_PREFIX+t}
   end
 
   def mysql
@@ -69,10 +79,10 @@ HERE
 
   def reset_db
     @original_contents.nil? ? nil : @original_contents.each_pair do |table,contents|
-      mysql.query("delete from #{@TABLE_PREFIX}#{table}")
+      mysql.query("delete from #{table}")
       contents.each do |row|
         values = row.map{|v|"#{v.nil? ? 'null' : "'"+Mysql.escape_string(v)+"'"}"}.join(', ')
-        mysql.query("insert into #{@TABLE_PREFIX}#{table} values (#{values})")
+        mysql.query("insert into #{table} values (#{values})")
       end
     end
   end
