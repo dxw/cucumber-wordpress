@@ -33,6 +33,11 @@ Given /^I am logged in as "([^\"]*)"$/ do |user|
   click_button('Log In')
 end
 
+Given /^I am not logged in$/ do
+  visit path_to 'admin dashboard'
+  click_link('Log Out')
+end
+
 Given /^theme "([^\"]*)" is enabled$/ do |theme|
   Given 'I am logged in as "admin"'
   Given 'I am on manage themes'
