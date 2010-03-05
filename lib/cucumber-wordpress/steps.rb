@@ -49,6 +49,36 @@ Given /^plugin "([^\"]*)" is (enabled|disabled)$/ do |plugin,able|
   end
 end
 
+Given /^there is a (post|page) called "([^\"]*)"$/ do |post_type,title|
+  visit path_to "new #{post_type}"
+  fill_in 'title', :with => title
+  click_button 'Publish'
+end
+
+Given /^the (post|page) "([^\"]*)" has meta "([^\"]*)" as "(.*)"$/ do |post_type,title,key,value|
+  visit path_to %Q%edit #{post_type} "#{title}"%
+  fill_in 'metakeyinput', :with => key
+  fill_in 'metavalue', :with => value
+  click_button 'Update'
+end
+
+Given /^the page "([^\"]*)" has template "([^\"]*)"$/ do |title,template|
+  visit path_to %Q%edit page "#{title}"%
+  select template, :from => 'Page Template'
+  click_button 'Update'
+end
+
+Given /^permalinks are set as "([^\"]*)"$/ do |structure|
+  visit '/wp-admin/options-permalink.php'
+  fill_in 'permalink_structure', :with => structure
+  click_button 'Save Changes'
+end
+
+Given /^option "([^\"]*)" is set to "(.*)"$/ do |option, value|
+  WordPress.mysql.query(%Q'DELETE FROM #{WordPress.TABLE_PREFIX}options WHERE option_name="#{Mysql.escape_string option}"')
+  WordPress.mysql.query(%Q'INSERT INTO #{WordPress.TABLE_PREFIX}options SET option_name="#{Mysql.escape_string option}", option_value="#{Mysql.escape_string value}"')
+end
+
 Then /^there should be (\d+) posts?$/ do |count|
   WordPress.mysql.query("select count(*) from #{WordPress.TABLE_PREFIX}posts where ID != 1 and post_type = 'post' and post_status != 'trash'").fetch_row.first.to_i.should == count.to_i
 end
@@ -68,9 +98,4 @@ end
 
 Then /^there should be a post called "([^\"]*)" in the "([^\"]*)" category$/ do |post, category|
   WordPress.mysql.query("select count(*) > 0 from #{WordPress.TABLE_PREFIX}terms join #{WordPress.TABLE_PREFIX}term_relationships join #{WordPress.TABLE_PREFIX}posts where term_id = term_taxonomy_id and ID = object_id and (post_title = '#{Mysql.escape_string(post)}' or post_name = '#{Mysql.escape_string(post)}') and (name = '#{Mysql.escape_string(category)}' or slug = '#{Mysql.escape_string(category)}')").fetch_row.first.to_i.should == 1
-end
-
-Given /^option "([^\"]*)" is set to "(.*)"$/ do |option, value|
-  WordPress.mysql.query(%Q'DELETE FROM #{WordPress.TABLE_PREFIX}options WHERE option_name="#{Mysql.escape_string option}"')
-  WordPress.mysql.query(%Q'INSERT INTO #{WordPress.TABLE_PREFIX}options SET option_name="#{Mysql.escape_string option}", option_value="#{Mysql.escape_string value}"')
 end
