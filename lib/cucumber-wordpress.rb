@@ -111,4 +111,8 @@ HERE
     end
     URI::join("http://#{@WEBHOST}/", partial)
   end
+
+  def php code
+    `php -r 'include "#{WordPress.ABSPATH}/wp-load.php"; #{code};' 2>/dev/null`
+  end
 end
