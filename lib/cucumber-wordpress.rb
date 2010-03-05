@@ -103,9 +103,12 @@ HERE
       '/wp-admin/themes.php'
     when /^new page$/
       '/wp-admin/page-new.php'
-    when /^post "(.+?)"$/
-      id = WordPress.mysql.query(%Q'SELECT ID FROM #{WordPress.TABLE_PREFIX}posts WHERE post_title="#{$1}"').fetch_row.first.to_i
+    when /^(post|page) "(.+?)"$/
+      id = WordPress.mysql.query(%Q'SELECT ID FROM #{WordPress.TABLE_PREFIX}posts WHERE post_title="#{$2}"').fetch_row.first.to_i
       WordPress.php("echo get_permalink(#{id})")
+    when /^edit (post|page) "(.+?)"$/
+      id = WordPress.mysql.query(%Q'SELECT ID FROM #{WordPress.TABLE_PREFIX}posts WHERE post_title="#{$2}"').fetch_row.first.to_i
+      "/wp-admin/#{$1}.php?action=edit&post=#{id}"
     else
       return nil
     end
