@@ -5,8 +5,8 @@ Mysql::Result.send(:include, Enumerable)
 class WordPress
   include Singleton
 
-  def self.method_missing(method, *args)
-    self.instance.send(method, *args)
+  def self.method_missing(method, *args, &block)
+    self.instance.send(method, *args, &block)
   end
 
   attr_accessor :config, :passwords, :original_contents, :tables
@@ -54,6 +54,9 @@ class WordPress
     @has_config = File.exist? File.join(@ABSPATH,'wp-config.php')
     FileUtils.cp File.join(@ABSPATH,'wp-config.php'), File.join(@ABSPATH,'.wp-config.php') if @has_config
 
+    extra_config = ''
+    yield extra_config
+
     # Write our own
     open(File.join(@ABSPATH,'wp-config.php'),'w+') do |f|
       f.write <<HERE
@@ -67,6 +70,7 @@ define('DB_CHARSET', '#{@DB_CHARSET}');
 define('DB_COLLATE', '#{@DB_COLLATE}');
 $table_prefix  = '#{@TABLE_PREFIX}';
 if ( !defined('ABSPATH') ) define('ABSPATH', dirname(__FILE__) . '/');
+#{extra_config}
 require_once(ABSPATH . 'wp-settings.php');
 HERE
     end
