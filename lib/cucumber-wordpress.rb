@@ -55,7 +55,7 @@ class WordPress
     FileUtils.cp File.join(@ABSPATH,'wp-config.php'), File.join(@ABSPATH,'.wp-config.php') if @has_config
 
     extra_config = ''
-    yield extra_config
+    yield extra_config if block_given?
 
     # Write our own
     open(File.join(@ABSPATH,'wp-config.php'),'w+') do |f|
