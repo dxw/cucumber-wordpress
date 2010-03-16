@@ -56,7 +56,7 @@ Given /^there is a (post|page) called "([^\"]*)"$/ do |post_type,title|
 end
 
 Given /^the (post|page) "([^\"]*)" has meta "([^\"]*)" as "(.*)"$/ do |post_type,title,key,value|
-  WordPress.mysql.query(%Q'INSERT INTO #{WordPress.TABLE_PREFIX}postmeta SET post_id=(SELECT ID FROM #{WordPress.TABLE_PREFIX}posts WHERE post_title="#{title}"), meta_key="#{Mysql.escape_string(key)}", meta_value="#{Mysql.escape_string(value)}"')
+  WordPress.mysql.query(%Q'INSERT INTO #{WordPress.TABLE_PREFIX}postmeta SET post_id=(SELECT ID FROM #{WordPress.TABLE_PREFIX}posts WHERE post_title="#{title}" AND post_type != "revision"), meta_key="#{Mysql.escape_string(key)}", meta_value="#{Mysql.escape_string(value)}"')
 end
 
 Given /^the page "([^\"]*)" has template "([^\"]*)"$/ do |title,template|
