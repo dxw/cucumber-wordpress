@@ -121,6 +121,6 @@ HERE
   end
 
   def php code
-    `php -r 'include "#{WordPress.ABSPATH}/wp-load.php"; #{code};' 2>/dev/null`
+    `php -r '$_SERVER["SERVER_SOFTWARE"]=""; $_SERVER["REQUEST_URI"]="/"; include "#{WordPress.ABSPATH}/wp-load.php"; #{code};' 2>/dev/null`
   end
 end
