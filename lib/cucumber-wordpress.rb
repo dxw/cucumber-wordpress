@@ -117,7 +117,7 @@ HERE
     else
       return nil
     end
-    URI::join("http://#{@WEBHOST}/", partial)
+    URI::join("http://#{@WEBHOST}/", partial).to_s
   end
 
   def php code
