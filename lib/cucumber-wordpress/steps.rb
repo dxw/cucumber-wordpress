@@ -38,7 +38,7 @@ end
 Given /^plugin "([^\"]*)" is (enabled|disabled)$/ do |plugin,able|
   Given 'I am logged in as "admin"'
   visit path_to 'admin dashboard'
-  click_link('Plugins')
+  click_link(/Plugins ?/)
   link = %Q&//a[contains(@href,"#{plugin}")]&
   if dom.xpath("#{link}/child::text()").any?{|t|t.to_s == 'Activate'}
     if able == 'enabled'
