@@ -109,15 +109,17 @@ HERE
     when /^new page$/
       '/wp-admin/page-new.php'
     when /^(post|page) "(.+?)"$/
-      id = WordPress.mysql.query(%Q'SELECT ID FROM #{WordPress.TABLE_PREFIX}posts WHERE post_title="#{$2}"').fetch_row.first.to_i
-      WordPress.php("echo get_permalink(#{id})")
+      WordPress.php("echo get_permalink(#{get_post_id($2)})")
     when /^edit (post|page) "(.+?)"$/
-      id = WordPress.mysql.query(%Q'SELECT ID FROM #{WordPress.TABLE_PREFIX}posts WHERE post_title="#{$2}"').fetch_row.first.to_i
-      "/wp-admin/#{$1}.php?action=edit&post=#{id}"
+      "/wp-admin/#{$1}.php?action=edit&post=#{get_post_id($2)}"
     else
       return nil
     end
     URI::join("http://#{@WEBHOST}/", partial).to_s
+  end
+
+  def get_post_id(title)
+    WordPress.mysql.query(%Q'SELECT ID FROM #{WordPress.TABLE_PREFIX}posts WHERE post_title="#{title}"').fetch_row.first.to_i
   end
 
   def php code
