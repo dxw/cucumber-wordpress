@@ -1,12 +1,44 @@
 Given /^WordPress is installed$/ do
   visit path_to 'homepage'
   title = 'A Very Boring Test Title'
+
+  username = 'admin'
+  password = 'password'
+
   if response.include? '<title>WordPress &rsaquo; Installation</title>'
-    fill_in('Blog Title', :with => title)
-    fill_in('Your E-mail', :with => 'test@example.org')
-    click_button('Install WordPress')
-    WordPress.passwords = {'admin' => response.match(%r[<td><code>(.+)</code><br />])[1]}
+    if response.include? '>Blog Title<'
+      # WordPress 2
+      fill_in('Blog Title', :with => title)
+      fill_in('Your E-mail', :with => 'test@example.org')
+      uncheck('blog_public')
+      click_button('Install WordPress')
+
+      xpath = '/html/body/table/tr/th[text()="%s"]/../td/code/text()'
+      password = response.root.xpath(xpath % 'Password').to_s
+
+
+    elsif response.include? '>Site Title<'
+      # WordPress 3
+      fill_in('Site Title', :with => title)
+
+      fill_in('user_name', :with => username)
+      # webrat puts values into blank fields, so set these manually
+      fill_in('admin_password', :with => password)
+      fill_in('admin_password2', :with => password)
+
+      fill_in('Your E-mail', :with => 'test@example.org')
+      uncheck('blog_public')
+      click_button('Install WordPress')
+
+    else
+      raise Exception, 'This version of WordPress is probably not supported'
+    end
+
+    WordPress.passwords = {username => password}
+
   end
+
+
   visit path_to 'login page'
   response.should include "<title>#{title} &rsaquo; Log In</title>"
 
