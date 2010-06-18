@@ -83,7 +83,12 @@ end
 
 Given /^there is a (post|page) called "([^\"]*)"$/ do |post_type,title|
   visit path_to "new #{post_type}"
-  fill_in 'title', :with => title
+  case WordPress.major
+  when 2
+    fill_in 'title', :with => title
+  when 3
+    fill_in 'post_title', :with => title
+  end
   click_button 'Publish'
 end
 

@@ -107,7 +107,14 @@ HERE
     when /^manage themes$/
       '/wp-admin/themes.php'
     when /^new page$/
-      '/wp-admin/page-new.php'
+      case major
+      when 2
+        '/wp-admin/page-new.php'
+      when 3
+        '/wp-admin/post-new.php?post_type=page'
+      else
+        raise
+      end
     when /^(post|page) "(.+?)"$/
       WordPress.php("echo get_permalink(#{get_post_id($2)})")
     when /^edit (post|page) "(.+?)"$/
@@ -124,5 +131,28 @@ HERE
 
   def php code
     `php -r '$_SERVER["SERVER_SOFTWARE"]=""; $_SERVER["REQUEST_URI"]="/"; include "#{WordPress.ABSPATH}/wp-load.php"; #{code};' 2>/dev/null`
+  end
+
+  def version
+    return @version if @version
+    @version = php 'global $wp_version; echo $wp_version;'
+    @version.match(/^(\d+)\.(\d+)(:?\.(\d+))?$/)
+    @major = $1.to_i
+    @minor = $2.to_i
+    @patch = $3.to_i
+    @version
+  end
+
+  def major
+    version
+    @major
+  end
+  def minor
+    version
+    @minor
+  end
+  def patch
+    version
+    @patch
   end
 end
