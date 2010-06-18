@@ -42,7 +42,7 @@ class WordPress
   end
 
   def create_db
-    mysql.query("create database #{@DB_NAME} character set = #{@DB_CHARSET}#{@DB_COLLATE.present? ? " collate = #{@DB_COLLATE}" : ''}")
+    mysql.query("create database #{@DB_NAME} character set = #{@DB_CHARSET}#{@DB_COLLATE.empty? ? '' : " collate = #{@DB_COLLATE}"}")
     mysql.query("use #{@DB_NAME}")
   end
 
