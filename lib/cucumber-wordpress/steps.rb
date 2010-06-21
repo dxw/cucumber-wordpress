@@ -1,3 +1,27 @@
+def see? content
+  see_within? '.', content
+end
+
+def see_within? selector, content
+  within(selector) do |item|
+    if item.nil?
+      has_content? content
+    else
+      item.dom.to_s.include? content
+    end
+  end
+end
+
+def should_see_within selector, content
+  within(selector) do |item|
+    if item.nil?
+      page.should have_content content
+    else
+      item.dom.to_s.should include content
+    end
+  end
+end
+
 Given /^WordPress is installed$/ do
   visit path_to 'homepage'
   title = 'A Very Boring Test Title'
@@ -5,8 +29,8 @@ Given /^WordPress is installed$/ do
   username = 'admin'
   password = 'password'
 
-  if response.include? '<title>WordPress &rsaquo; Installation</title>'
-    if response.include? '>Blog Title<'
+  if see_within?('//title', 'WordPress › Installation')
+    if see? 'Blog Title'
       # WordPress 2
       fill_in('Blog Title', :with => title)
       fill_in('Your E-mail', :with => 'test@example.org')
@@ -17,7 +41,7 @@ Given /^WordPress is installed$/ do
       password = response.root.xpath(xpath % 'Password').to_s
 
 
-    elsif response.include? '>Site Title<'
+    elsif see? 'Site Title'
       # WordPress 3
       fill_in('Site Title', :with => title)
 
@@ -38,9 +62,8 @@ Given /^WordPress is installed$/ do
 
   end
 
-
   visit path_to 'login page'
-  response.should include "<title>#{title} &rsaquo; Log In</title>"
+  should_see_within('//title', "#{title} › Log In")
 
   # Take this so we can reset the DB before each scenario
   WordPress.original_contents = {}
@@ -51,8 +74,17 @@ end
 
 Given /^I am logged in as "([^\"]*)"$/ do |user|
   visit path_to 'login page'
-  fill_in('Username', :with => user)
-  fill_in('Password', :with => WordPress.passwords[user])
+
+  if respond_to? :find_field
+    # This always fails for some unknown reason
+    until find_field('user_login').value == user
+      fill_in('user_login', :with => user)
+    end
+  else
+    fill_in('user_login', :with => user)
+  end
+
+  fill_in('user_pass', :with => WordPress.passwords[user])
   click_button('Log In')
 end
 
@@ -70,15 +102,22 @@ end
 Given /^plugin "([^\"]*)" is (enabled|disabled)$/ do |plugin,able|
   Given 'I am logged in as "admin"'
   visit path_to 'admin dashboard'
-  click_link(/Plugins ?/)
-  link = %Q&//a[contains(@href,"#{plugin}")]&
-  if dom.xpath("#{link}/child::text()").any?{|t|t.to_s == 'Activate'}
-    if able == 'enabled'
-      click_link_within("#{link}/..",'Activate')
-    else
-      click_link_within("#{link}/..",'Deactivate')
+  begin
+    begin
+      click_link('Plugins')
+    rescue Selenium::WebDriver::Error::ElementNotDisplayedError
+      click_link('Plugins ')
     end
+  rescue NameError
+    click_link('Plugins ')
   end
+  link = %Q&//a[contains(@href,"#{plugin}")]&
+  if able == 'enabled'
+    text = 'Activate'
+  else
+    text = 'Deactivate'
+  end
+  within("#{link}/..") { click_link(text) }
 end
 
 Given /^there is a (post|page) called "([^\"]*)"$/ do |post_type,title|
