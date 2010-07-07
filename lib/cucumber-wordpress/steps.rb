@@ -22,6 +22,10 @@ def should_see_within selector, content
   end
 end
 
+##
+## Given
+##
+
 Given /^WordPress is installed$/ do
   visit path_to 'homepage'
   title = 'A Very Boring Test Title'
@@ -101,16 +105,7 @@ end
 
 Given /^plugin "([^\"]*)" is (enabled|disabled)$/ do |plugin,able|
   Given 'I am logged in as "admin"'
-  visit path_to 'admin dashboard'
-  begin
-    begin
-      click_link('Plugins')
-    rescue Selenium::WebDriver::Error::ElementNotDisplayedError
-      click_link('Plugins ')
-    end
-  rescue NameError
-    click_link('Plugins ')
-  end
+  Given 'I am on plugins'
   link = %Q&//a[contains(@href,"#{plugin}")]&
   if able == 'enabled'
     text = 'Activate'
@@ -150,6 +145,22 @@ end
 Given /^option "([^\"]*)" is set to "(.*)"$/ do |option, value|
   WordPress.mysql.query(%Q'DELETE FROM #{WordPress.TABLE_PREFIX}options WHERE option_name="#{Mysql.escape_string option}"')
   WordPress.mysql.query(%Q'INSERT INTO #{WordPress.TABLE_PREFIX}options SET option_name="#{Mysql.escape_string option}", option_value="#{Mysql.escape_string value}"')
+end
+
+##
+## Should
+##
+
+Then /^plugin "([^\"]*)" should be (enabled|disabled)$/ do |plugin,able|
+  Given 'I am logged in as "admin"'
+  Given 'I am on plugins'
+  link = %Q&//a[contains(@href,"#{plugin}")]&
+  if able == 'enabled'
+    text = 'Deactivate'
+  else
+    text = 'Activate'
+  end
+  within("#{link}/..") {|content| content.dom.inner_text.should include text }
 end
 
 Then /^there should be (\d+) posts?$/ do |count|

@@ -106,6 +106,8 @@ HERE
       "/wp-admin/upload.php"
     when /^manage themes$/
       '/wp-admin/themes.php'
+    when /^plugins$/
+      '/wp-admin/plugins.php'
     when /^new page$/
       case major
       when 2
