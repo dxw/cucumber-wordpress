@@ -112,7 +112,7 @@ Given /^plugin "([^\"]*)" is (enabled|disabled)$/ do |plugin,able|
   else
     text = 'Deactivate'
   end
-  within("#{link}/..") { click_link(text) }
+  click_link_within "#{link}/..", text
 end
 
 Given /^there is a (post|page) called "([^\"]*)"$/ do |post_type,title|
@@ -160,7 +160,7 @@ Then /^plugin "([^\"]*)" should be (enabled|disabled)$/ do |plugin,able|
   else
     text = 'Activate'
   end
-  within("#{link}/..") {|content| content.dom.inner_text.should include text }
+  should_see_within "#{link}/..", text
 end
 
 Then /^there should be (\d+) posts?$/ do |count|
