@@ -147,6 +147,21 @@ Given /^option "([^\"]*)" is set to "(.*)"$/ do |option, value|
   WordPress.mysql.query(%Q'INSERT INTO #{WordPress.TABLE_PREFIX}options SET option_name="#{Mysql.escape_string option}", option_value="#{Mysql.escape_string value}"')
 end
 
+Given /^there is a user "([^"]*)" with role "([^"]*)"$/ do |username, role|
+  password = username
+
+  visit path_to 'new user'
+
+  fill_in 'user_login', :with => username
+  fill_in 'email', :with => username+'@example.org'
+  fill_in 'pass1', :with => password
+  fill_in 'pass2', :with => password
+  select role.capitalize, :from => 'role'
+  click_button 'Add User'
+
+  WordPress.passwords.merge!({username => password})
+end
+
 ##
 ## Should
 ##

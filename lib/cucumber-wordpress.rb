@@ -108,6 +108,8 @@ HERE
       '/wp-admin/themes.php'
     when /^plugins$/
       '/wp-admin/plugins.php'
+    when /^new user$/
+      '/wp-admin/user-new.php'
     when /^new page$/
       case major
       when 2
