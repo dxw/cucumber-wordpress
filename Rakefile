@@ -8,6 +8,7 @@ begin
     gem.authors = ["Tom Adams"]
     gem.add_dependency "cucumber"
     gem.add_dependency "webrat"
+    gem.add_dependency "mechanize"
     gem.add_dependency "mysql"
   end
   Jeweler::GemcutterTasks.new

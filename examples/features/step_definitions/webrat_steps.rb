@@ -146,12 +146,7 @@ Then /^the "([^\"]*)" checkbox should not be checked$/ do |label|
 end
 
 Then /^I should be on (.+)$/ do |page_name|
-  uri = URI.parse(current_url)
-  if uri.query.blank?
-    uri.path.should == path_to(page_name)
-  else
-    "#{uri.path}?#{uri.query}".should include(path_to(page_name))
-  end
+  current_url.to_s.should include(path_to(page_name).to_s)
 end
 
 Then /^show me the page$/ do

@@ -1,5 +1,6 @@
 require 'singleton'
 require 'fileutils'
+require 'uri'
 require 'mysql'
 Mysql::Result.send(:include, Enumerable)
 

@@ -1,4 +1,5 @@
 --- 
+ABSPATH: ../../..
 WEBHOST: localhost
 DB_NAME: wordpress_test
 DB_USER: root
