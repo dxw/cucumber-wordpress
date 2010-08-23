@@ -7,12 +7,17 @@ Environment setup and step definitions for testing WordPress with Cucumber.
 Install the gem:
   gem install cucumber-wordpress --source http://gemcutter.org
 
-Copy the examples/features/ directory into an existing WordPress installation:
-  cd wordpress-installation
+Copy the examples/features/ directory into an existing WordPress installation
+(or plugin/theme):
+  cd wordpress-plugin
   cp -R /usr/lib/ruby/gems/1.8/gems/cucumber-wordpress-1.0/examples/features .
 
 Configure wp-config variables:
   vim features/support/config.yml
+
+ABSPATH should be WordPress' ABSPATH constant (the directory where
+wp-config.php is) relative to the directory you'd run cucumber in (where
+features/ is).
 
 Run cucumber:
   cucumber
@@ -35,4 +40,4 @@ Run cucumber:
 
 == Copyright
 
-Copyright © 2009 The Dextrous Web. See LICENCE for details.
+Copyright © 2009-2010 The Dextrous Web. See LICENCE for details.
