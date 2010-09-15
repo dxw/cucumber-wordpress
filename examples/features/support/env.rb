@@ -4,6 +4,7 @@
 
 require 'spec/mocks'
 require 'webrat'
+require 'cucumber-wordpress/webrat-patches'
 Webrat.configure do |config|
   config.mode = :mechanize
 end
