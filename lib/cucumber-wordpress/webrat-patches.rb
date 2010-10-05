@@ -1,3 +1,4 @@
+require 'rspec/mocks/spec_methods'
 #
 # Let's fix a few bugs in Webrat!
 #
@@ -6,7 +7,11 @@
 # This is needed
 module Webrat
   class Session
-    include Spec::Mocks::ExampleMethods
+    begin
+      include RSpec::Mocks::ExampleMethods
+    rescue NameError
+      include Spec::Mocks::ExampleMethods
+    end
     def response
       m = mock
       m.should_receive(:body).any_number_of_times.and_return(response_body)
