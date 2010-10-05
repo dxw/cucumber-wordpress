@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require 'rspec/mocks/spec_methods'
 #
 # Let's fix a few bugs in Webrat!

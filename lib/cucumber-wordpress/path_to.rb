@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 class WordPress
   def path_to(page_name)
     partial = case page_name

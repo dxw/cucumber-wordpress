@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 Then /^plugin "([^\"]*)" should be (enabled|disabled)$/ do |plugin,able|
   Given 'I am logged in as "admin"'
   Given 'I am on plugins'

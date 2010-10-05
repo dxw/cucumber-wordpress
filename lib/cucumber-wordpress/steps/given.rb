@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 Given /^WordPress is installed$/ do
   visit path_to 'homepage'
   title = 'A Very Boring Test Title'

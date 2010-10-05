@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 def see? content
   see_within? '.', content
 end
