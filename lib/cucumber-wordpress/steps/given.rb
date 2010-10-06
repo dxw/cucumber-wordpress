@@ -80,7 +80,7 @@ end
 Given /^plugin "([^\"]*)" is (enabled|disabled)$/ do |plugin,able|
   Given 'I am logged in as "admin"'
   Given 'I am on plugins'
-  link = %Q&//a[contains(@href,"#{plugin}")]&
+  link = %Q&//a[contains(@href,"plugin=#{plugin}%2F")]&
   if able == 'enabled'
     text = 'Activate'
   else
