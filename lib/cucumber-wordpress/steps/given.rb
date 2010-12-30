@@ -131,7 +131,11 @@ Given /^there is a user "([^"]*)" with role "([^"]*)"$/ do |username, role|
   fill_in 'pass1', :with => password
   fill_in 'pass2', :with => password
   select role.capitalize, :from => 'role'
-  click_button 'Add User'
+  begin
+    click_button 'Add New User' # 3.1
+  rescue Webrat::NotFoundError
+    click_button 'Add User' # 3.0
+  end
 
   WordPress.passwords.merge!({username => password})
 end
